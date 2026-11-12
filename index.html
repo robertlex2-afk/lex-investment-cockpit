@@ -1,75 +1,221 @@
 <!doctype html>
-<html lang="de"><head>
+<html lang="de">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>LEX Investment Cockpit 6.1</title>
+<title>LEX Investment Cockpit 6.2</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1220;--p:#131e30;--p2:#1b2a40;--line:#2a3a52;--muted:#9aabc2;--txt:#edf3fb;--green:#45d49a}
+:root{color-scheme:dark;--bg:#0b1220;--p:#131e30;--p2:#1b2a40;--line:#2a3a52;--muted:#9aabc2;--txt:#edf3fb;--green:#45d49a;--blue:#79aaff;--gold:#f2c66d;--red:#ff818b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
-header{padding:20px max(18px,calc((100vw - 1000px)/2));background:#101827;border-bottom:1px solid var(--line)}
-h1{font-size:21px;margin:0 0 4px}header p,.muted,.note{color:var(--muted)}header p{margin:0;font-size:13px}
-main{max-width:1000px;margin:auto;padding:17px;display:grid;gap:14px}
+header{padding:18px max(16px,calc((100vw - 1050px)/2));background:#101827;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+h1{font-size:21px;margin:0 0 4px}header p,.muted,.note{color:var(--muted)}header p{margin:0;font-size:12px}
+main{max-width:1050px;margin:auto;padding:15px;display:grid;gap:13px}
 .panel,.stat{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:15px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{color:var(--txt);text-align:left;width:100%;cursor:pointer}.stat:active,.stat:focus-visible{border-color:var(--green);outline:2px solid transparent}.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:4px}.stat span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
-h2{font-size:16px;margin:0 0 12px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+h2{font-size:16px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 input,select,textarea,button{font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--p2);color:var(--txt)}
-input,textarea{min-width:0;flex:1}textarea{width:100%;min-height:65px;resize:vertical}button{cursor:pointer}button.primary{background:#167a5a;border-color:#167a5a}
-button.danger{background:#47252c;border-color:#63313a;padding:7px 9px}.tabs{display:flex;gap:7px;overflow:auto}.tab{white-space:nowrap}.tab.active{background:#167a5a;border-color:#167a5a}
-.stock{padding:13px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.stock:last-child{border:0}
-.name{font-weight:700}.sub{font-size:12px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.actions input{width:100px;flex:0 1 100px}.actions select{max-width:145px;padding:8px}
-.note{font-size:12px;line-height:1.5}.fieldlabel{font-size:12px;color:var(--muted);display:block;margin:8px 0 4px}
-.details{display:none;grid-column:1/-1;padding:10px;background:#101a2a;border-radius:10px}.details.open{display:block}
-@media(max-width:560px){.grid{grid-template-columns:repeat(3,1fr)}.stat{padding:11px}.stat strong{font-size:21px}.stock{grid-template-columns:1fr}.actions{justify-content:flex-start}}
-</style></head><body>
-<header><h1>LEX Investment Cockpit <span style="font-size:12px;color:var(--muted)">6.1</span></h1><p>Deine persönliche Aktien- und Watchlist-Verwaltung</p></header>
+input,textarea{min-width:0;flex:1}textarea{width:100%;min-height:65px;resize:vertical}button{cursor:pointer}button.primary{background:#167a5a;border-color:#167a5a}button:disabled{opacity:.5;cursor:not-allowed}
+.tabs{display:flex;gap:7px;overflow:auto}.tab{white-space:nowrap}.tab.active{background:#167a5a;border-color:#167a5a}
+.ownerTabs .tab.partner.active{background:#214c78;border-color:#477db9}.ownerTabs .tab.combined.active{background:#5a4722;border-color:#8a6d36}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{padding:12px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:23px;margin-top:4px}.stat span{font-size:11px;color:var(--muted)}
+.card{background:var(--p2);border:1px solid var(--line);border-radius:12px;padding:12px}.badge{display:inline-block;border-radius:99px;padding:4px 8px;font-size:11px;background:#24374f;color:#d6e5f7}.green{color:var(--green)}.blue{color:var(--blue)}.gold{color:var(--gold)}
+.stock{padding:11px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.stock:last-child{border:0}.name{font-weight:700}.sub,.note{font-size:12px;color:var(--muted);line-height:1.5}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.actions input{width:110px;flex:0 1 110px}.danger{background:#47252c;border-color:#63313a;padding:7px 9px}
+.hidden{display:none!important}.fieldlabel{font-size:12px;color:var(--muted);display:block;margin:8px 0 4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
+.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.month{background:var(--p2);border:1px solid var(--line);border-radius:11px;padding:10px}.month b{display:block}.bar{height:5px;border-radius:99px;background:#26374d;margin-top:7px;overflow:hidden}.bar span{display:block;height:100%;background:var(--green)}
+.notice{background:#172b2a;border:1px solid #2e5b4e;border-radius:12px;padding:12px}.warn{background:#332b1c;border:1px solid #66522a;border-radius:12px;padding:12px}
+.section{display:none}.section.show{display:block}.owner{display:none}.owner.show{display:block}
+small.muted{font-size:11px}
+@media(max-width:600px){main{padding:11px}.panel{padding:12px}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.stat strong{font-size:19px}.stock{grid-template-columns:1fr}.actions{justify-content:flex-start}.months{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:14px 12px}}
+</style></head>
+<body>
+<header><h1>LEX Investment Cockpit <span style="font-size:12px;color:var(--muted)">6.2.1</span></h1><p>Getrennte Depots · Broker-Import · Aktienanalyse · Dividenden · Vermögensplanung</p></header>
 <main>
-<section class="grid" aria-label="Cockpit-Navigation">
- <button type="button" class="stat" id="goStocks"><small>Aktien gesamt</small><strong id="total">0</strong><span>Zur Aktienübersicht</span></button>
- <button type="button" class="stat" id="goLists"><small>Watchlists</small><strong id="listCount">0</strong><span>Watchlists auswählen</span></button>
- <button type="button" class="stat" id="goTargets"><small>Aktive Zielkurse</small><strong id="alerts">0</strong><span>Zielkurse verwalten</span></button>
+<section class="panel">
+ <div class="row" style="justify-content:space-between"><h2 style="margin:0">Bereich auswählen</h2><span class="badge">6.2.1 Prototyp</span></div>
+ <div class="tabs ownerTabs" style="margin-top:11px">
+  <button class="tab active" data-owner="mine">Mein Vermögen</button>
+  <button class="tab partner" data-owner="partner">Depot Verlobte</button>
+  <button class="tab combined" data-owner="combined">Gemeinsam</button>
+ </div>
+ <div id="ownerDescription" class="note" style="margin-top:8px">Deine zwei Depots werden getrennt geführt.</div>
 </section>
-<section class="panel" id="watchlistPanel"><h2>Watchlists</h2><div class="tabs" id="tabs"></div>
- <div class="row" style="margin-top:11px"><input id="newList" placeholder="Neue Watchlist, z. B. Dividenden"><button id="addList">+ Erstellen</button></div></section>
-<section class="panel" id="stocksPanel"><h2 id="listTitle">Wachstumsaktien</h2>
- <div class="row"><input id="stockName" placeholder="Aktienname oder Unternehmen"><input id="symbol" placeholder="Ticker / ISIN" style="max-width:135px"><button class="primary" id="addStock">+ Aktie</button></div>
- <div id="stocks" style="margin-top:10px"></div></section>
-<section class="panel" id="targetPanel"><h2>Aktive Zielkurse</h2><div id="targetStocks"></div></section>
-<section class="panel"><h2>Aktienmarkt aktualisieren</h2>
- <p class="note">Erstellt aus allen deinen aktuellen Watchlists einen fertigen Analyseauftrag. Kopiere ihn und füge ihn in diesen Chat ein, damit ich Kurse, Nachrichten, Quartalszahlen und Bewertungen recherchieren kann. Die App selbst läuft lokal und überwacht nicht im Hintergrund.</p>
- <div class="row"><button class="primary" id="marketRefresh">Analyseauftrag erstellen</button><button id="copyPrompt">Auftrag kopieren</button></div>
- <textarea id="marketPrompt" readonly placeholder="Hier erscheint dein persönlicher Analyseauftrag …" style="margin-top:10px"></textarea><p id="copyStatus" class="note" aria-live="polite"></p></section>
-<section class="panel"><h2>Datensicherung</h2><div class="row"><button id="export">Watchlists exportieren</button><label class="row" style="font-size:13px">Importieren <input type="file" id="import" accept="application/json" style="max-width:180px"></label></div>
- <p class="note">Deine Eingaben werden lokal in diesem Browser gespeichert. Exportiere gelegentlich eine Sicherung, damit du deine Listen nicht verlierst.</p></section>
-<section class="panel"><h2>Marktchart – TradingView</h2><p class="note">Der Chart wird kostenlos von TradingView eingebettet. Die Aktualität hängt vom jeweiligen Börsenplatz und dessen Datenfreigabe ab; verzögerte Kurse sind möglich. Das ist kein garantierter Echtzeit-Kursfeed.</p>
- <div class="row"><select id="chartSelect" style="width:100%"></select></div><div id="tvChart" style="height:440px;margin-top:10px;background:#101a2a;border-radius:10px;overflow:hidden"></div>
- <p class="note">Für die Anzeige werden Daten von TradingView geladen. <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color:#8bbcff">TradingView öffnen</a></p></section>
-<section class="panel"><h2>Technischer Status</h2><p class="note"><b>Aktuell:</b> Watchlist-Verwaltung, Notizen, Investmentthese, Zielkurse und lokale Datensicherung funktionieren im Prototyp.</p>
- <p class="note"><b>Noch nicht verbunden:</b> Live-/Echtzeitkurse, automatische Kursprüfung im Hintergrund, Nachrichtenfeed und echte Push-Mitteilungen. Dafür werden ein externer Datenanbieter, ein sicherer Server und ein HTTPS-Hosting benötigt. API-Schlüssel gehören nicht in diese Browser-Datei.</p></section>
+
+<section id="mine" class="owner show">
+ <div class="grid">
+  <button class="stat" onclick="setPortfolio('dividend')"><small>Dividendendepot</small><strong class="green">Scalable</strong><span>Import & Analyse</span></button>
+  <button class="stat" onclick="setPortfolio('growth')"><small>Wachstumsdepot</small><strong class="blue">Trade Republic</strong><span>Import & Analyse</span></button>
+ </div>
+ <section class="panel" style="margin-top:13px">
+  <div class="row" style="justify-content:space-between"><h2 id="portfolioTitle">Dividendendepot · Scalable Capital</h2><span id="portfolioBadge" class="badge green">Dividendendepot</span></div>
+  <div class="tabs" id="portfolioTabs">
+   <button class="tab active" data-view="overview">Portfolio</button><button class="tab" data-view="analysis">Aktienanalyse</button><button class="tab" data-view="import">CSV-Import</button><button class="tab" data-view="watch">Watchlist</button>
+  </div>
+  <div id="view-overview" class="section show">
+   <div class="grid3" style="margin-top:12px">
+    <div class="stat"><small>Positionen</small><strong id="PosCount">0</strong></div>
+    <div class="stat"><small>Bestandswert*</small><strong id="PosValue">–</strong></div>
+    <div class="stat"><small>Dividenden</small><strong id="DivTotal">–</strong></div>
+   </div>
+   <div id="positions" style="margin-top:10px"></div>
+   <p class="note">*Ein Marktwert kann nur berechnet werden, wenn aktuelle Kurse oder manuelle Kurswerte vorliegen. Einstandskosten sind keine aktuellen Marktwerte.</p>
+  </div>
+  <div id="view-analysis" class="section">
+   <div class="notice"><b id="analysisHeading">Analyse nach Dividendenstrategie</b><p class="note" id="analysisFocus">Ausschüttungsquote, Dividendenhistorie, Cashflow, Stabilität und Bewertung.</p></div>
+   <label class="fieldlabel">Aktie hinzufügen</label><div class="row"><input id="newStockName" placeholder="Unternehmen"><input id="newStockSymbol" placeholder="Ticker / ISIN"><button class="primary" id="saveStock">Speichern</button></div>
+   <div id="analysisStocks"></div>
+  </div>
+  <div id="view-import" class="section">
+   <div class="notice"><b id="importHeading">Scalable Capital → Dividendendepot</b><p class="note">Die Datei wird immer dem aktuell ausgewählten Depot zugeordnet. Der Broker wird zusätzlich anhand der CSV-Spalten geprüft.</p></div>
+   <label class="fieldlabel">CSV-Datei auswählen</label><input type="file" id="csvFile" accept=".csv,text/csv">
+   <div id="importMessage" class="note" style="margin-top:8px">Noch keine Datei ausgewählt.</div>
+   <div id="previewWrap" class="hidden" style="overflow:auto;margin-top:10px"><h3>Importvorschau</h3><div id="preview"></div><button class="primary" id="confirmImport" style="margin-top:10px">Buchungen übernehmen</button></div>
+   <p class="note">Vor dem Speichern werden Format, erkannte Buchungen und mögliche Doppelimporte geprüft. Ein erneuter identischer Dateiimport wird blockiert. CSV-Formate können sich je Broker ändern; unbekannte Spalten werden nicht stillschweigend falsch zugeordnet.</p>
+   <div id="importHistory"></div>
+  </div>
+  <div id="view-watch" class="section">
+   <h3>Watchlist dieses Depots</h3><p class="note">Neue Aktien werden anhand der gewählten Strategie bewertet. Die Empfehlung ist eine Entscheidungshilfe, keine automatische Kaufentscheidung.</p>
+   <div id="watchStocks"></div>
+  </div>
+ </section>
+</section>
+
+<section id="partner" class="owner">
+ <section class="panel">
+  <div class="row" style="justify-content:space-between"><h2>Depot meiner Verlobten</h2><span class="badge blue">Separater Datenbereich</span></div>
+  <div class="notice"><b>Scalable Capital · eigenes Depot</b><p class="note">Eigene Bestände, Transaktionen, Einstandskurse, Dividenden, Aktienanalyse und Prognose. Diese Daten werden nicht mit deinen Depots vermischt.</p></div>
+  <div class="tabs" id="partnerTabs" style="margin-top:12px">
+   <button class="tab active" data-pview="overview">Portfolio</button><button class="tab" data-pview="analysis">Aktienanalyse</button><button class="tab" data-pview="import">CSV-Import</button><button class="tab" data-pview="watch">Watchlist</button>
+  </div>
+  <div id="pview-overview" class="section show"><div class="grid3" style="margin-top:12px"><div class="stat"><small>Positionen</small><strong id="pPosCount">0</strong></div><div class="stat"><small>Einstandskosten</small><strong id="pPosValue">–</strong></div><div class="stat"><small>Dividenden</small><strong id="pDivTotal">–</strong></div></div><div id="pPositions"></div></div>
+  <div id="pview-analysis" class="section"><div class="notice"><b>Eigene Aktienanalyse</b><p class="note">Fundamentaldaten, Bewertung, Risiken und Kaufzone – ausschließlich auf Basis ihrer Positionen und Watchlist.</p></div><label class="fieldlabel">Aktie hinzufügen</label><div class="row"><input id="pStockName" placeholder="Unternehmen"><input id="pStockSymbol" placeholder="Ticker / ISIN"><button class="primary" id="pSaveStock">Speichern</button></div><div id="pAnalysisStocks"></div></div>
+  <div id="pview-import" class="section"><div class="notice"><b>Scalable Capital → Depot deiner Verlobten</b><p class="note">Der Import wird ausschließlich ihrem Bereich zugeordnet.</p></div><label class="fieldlabel">Scalable-CSV auswählen</label><input type="file" id="pCsvFile" accept=".csv,text/csv"><div id="pImportMessage" class="note">Noch keine Datei ausgewählt.</div><div id="pPreviewWrap" class="hidden" style="overflow:auto;margin-top:10px"><h3>Importvorschau</h3><div id="pPreview"></div><button class="primary" id="pConfirmImport" style="margin-top:10px">Buchungen übernehmen</button></div><div id="pImportHistory"></div></div>
+  <div id="pview-watch" class="section"><h3>Eigene Watchlist</h3><div id="pWatchStocks"></div></div>
+ </section>
+</section>
+
+<section id="combined" class="owner">
+ <section class="panel"><h2>Gemeinsame Vermögensübersicht</h2><p class="note">Optionale Zusammenfassung. Die zugrunde liegenden Depots und Transaktionen bleiben getrennt.</p>
+  <div class="grid3"><div class="stat"><small>Dein Dividendendepot</small><strong id="cDiv">–</strong><span>Scalable</span></div><div class="stat"><small>Dein Wachstumsdepot</small><strong id="cGrowth">–</strong><span>Trade Republic</span></div><div class="stat"><small>Depot Verlobte</small><strong id="cPartner">–</strong><span>Scalable</span></div></div>
+  <div class="card" style="margin-top:10px"><small class="muted">Gesamte Einstandskosten aus importierten Käufen</small><div class="value" id="cTotal">–</div><small class="muted">Keine aktuelle Marktwertbewertung ohne Kursdaten.</small></div>
+ </section>
+</section>
+
+<section class="panel">
+ <h2>Dividenden-Monats- und Jahreskalender</h2>
+ <p class="note">Vergangene Zahlungen werden aus importierten Transaktionen erkannt. Zukünftige Dividenden sind nur Prognosen und benötigen gepflegte Dividendenschätzungen je Aktie.</p>
+ <div class="row"><label class="fieldlabel" for="divYear">Jahr</label><select id="divYear"><option>2026</option><option selected>2027</option><option>2028</option><option>2029</option></select><button id="refreshDiv">Jahr anzeigen</button></div>
+ <div class="grid3"><div class="stat"><small>Historisch erhalten</small><strong id="divHist">–</strong></div><div class="stat"><small>Prognose brutto</small><strong id="divForecast">–</strong></div><div class="stat"><small>Monate mit Zahlung</small><strong id="divMonths">–</strong></div></div>
+ <div class="months" id="divMonthsGrid" style="margin-top:10px"></div>
+ <div class="note" style="margin-top:9px">Für eine persönliche Prognose kannst du bei einer Position die jährliche Dividende je Aktie und einen erwarteten Zahlungsmonat ergänzen. Steuerabzüge und Wechselkurse können abweichen.</div>
+</section>
+
+<section class="panel">
+ <h2>Quartalsbericht- und Unternehmenskalender</h2>
+ <p class="note">Die Recherchefunktion erstellt für alle importierten Positionen und Watchlists direkte Suchlinks zu aktuellen Berichtsterminen und offiziellen Investor-Relations-Seiten. Übernimm nur Termine, die du geprüft hast, und kennzeichne sie als geschätzt oder offiziell bestätigt.</p>
+ <div class="row"><button class="primary" id="prepareEarningsResearch">Online-Terminrecherche vorbereiten</button><button id="addEarning">Termin manuell speichern</button></div>
+ <div id="earningsResearch" style="margin-top:10px"></div>
+ <div class="card" style="margin-top:10px"><b>Termin eintragen</b><div class="row" style="margin-top:8px"><input id="earnSymbol" placeholder="Ticker"><input id="earnDate" type="date"><select id="earnStatus"><option value="estimated">Geschätzt</option><option value="confirmed">Offiziell bestätigt</option><option value="published">Bericht veröffentlicht</option></select></div><div class="row" style="margin-top:8px"><input id="earnUrl" placeholder="Offizieller IR-Link"><button class="primary" id="saveEarning">Speichern</button></div></div>
+ <div id="earningsList"></div>
+</section>
+
+<section class="panel">
+ <h2>Vermögensprognose</h2>
+ <p class="note">Modellrechnung ohne Crash-Pfad. Renditen sind Annahmen, keine Vorhersage. Die drei Depotbereiche können getrennt simuliert werden; die gemeinsame Sicht addiert sie.</p>
+ <div class="grid">
+  <div><label class="fieldlabel">Startvermögen (€)</label><input id="forecastStart" type="number" value="60000"></div>
+  <div><label class="fieldlabel">Monatliche Sparrate (€)</label><input id="forecastMonthly" type="number" value="670"></div>
+  <div><label class="fieldlabel">Rendite p.a. (%)</label><input id="forecastRate" type="number" step=".5" value="7"></div>
+  <div><label class="fieldlabel">Zeitraum (Jahre)</label><input id="forecastYears" type="number" min="1" max="40" value="15"></div>
+ </div>
+ <div class="row"><button class="primary" id="calcForecast">Prognose berechnen</button></div>
+ <div class="card" style="margin-top:10px"><small class="muted">Geschätztes Endvermögen</small><div class="value green" id="forecastResult">–</div><div class="note" id="forecastDetails"></div></div>
+ <div id="forecastTable" style="overflow:auto;margin-top:10px"></div>
+</section>
+
+<section class="panel">
+ <h2>Datensicherung</h2><div class="row"><button class="primary" id="exportAll">Alle Bereiche sichern (JSON)</button><label class="row">Sicherung importieren <input type="file" id="restoreAll" accept=".json,application/json" style="max-width:190px"></label></div>
+ <p class="note">Daten bleiben lokal im Browser dieses Geräts. Regelmäßig exportieren. Beim Browserwechsel oder Löschen der Websitedaten gehen lokale Daten ohne Sicherung verloren. Teile den Export deiner Verlobten nur mit ihrer Zustimmung.</p>
+</section>
+<section class="panel">
+ <h2>Technischer Hinweis</h2>
+ <p class="note"><b>In diesem Prototyp funktionsfähig:</b> getrennte Bereiche, CSV-Vorschau und -Import, Scalable-Transaktionsformat mit den Spalten date/reference/assetType/type/isin/shares/amount, einfache Transaktions-/Bestandsauswertung, Watchlists, Recherchelinks für Berichtstermine, Statuspflege (geschätzt/bestätigt/veröffentlicht), Vermögenssimulator und lokale Sicherung.</p>
+ <p class="note"><b>Noch nicht verbunden:</b> automatische Auswertung von Suchtreffern, Live-Kurse, Übersetzungsdienst, automatische Push-Mitteilungen, Hintergrundüberwachung und verlässliche Echtzeit-Dividendenprognosen. Dafür braucht es externe Datenquellen und einen sicher betriebenen Server. Die CSV-Formate von Trade Republic müssen anhand eines echten Exports getestet werden.</p>
+</section>
 </main>
 <script>
-const starter={"Wachstumsaktien":[{name:"Nvidia",symbol:"NVDA"},{name:"TSMC",symbol:"TSM"},{name:"Airbus",symbol:"AIR"},{name:"Nutrien",symbol:"NTR"},{name:"Ferrari",symbol:"RACE"},{name:"CrowdStrike",symbol:"CRWD"},{name:"Lonza",symbol:"LONN"},{name:"Broadcom",symbol:"AVGO"},{name:"Constellation Software",symbol:"CSU"},{name:"Mercado Libre",symbol:"MELI"},{name:"Infineon",symbol:"IFX"}],"Dividendenaktien":[],"Beobachtung":[]};
-const KEY="lex-cockpit-v2";
-function normalizeStock(raw){if(Array.isArray(raw))return {name:String(raw[0]??"Unbenannte Aktie"),symbol:String(raw[1]??"").toUpperCase()};if(typeof raw==="string"){let p=raw.split(/[|·]/).map(x=>x.trim());return {name:p[0]||raw,symbol:(p[1]||"").toUpperCase()}}const s=raw&&typeof raw==="object"?raw:{};return {...s,name:String(s.name??s.company??s.companyName??s.title??s.stockName??"Unbenannte Aktie"),symbol:String(s.symbol??s.ticker??s.isin??s.wkn??s.code??"").toUpperCase(),target:s.target??s.targetPrice??s.target_price??s.zielkurs??s.zielKurs??s.priceTarget??""};}
-function normalizeLists(raw){let src=raw&&raw.lists&&typeof raw.lists==="object"?raw.lists:raw;if(!src||typeof src!=="object"||Array.isArray(src))src=starter;const out={};for(const [k,v] of Object.entries(src)){if(["active","reports","version"].includes(k))continue;out[k]=Array.isArray(v)?v.map(normalizeStock):[]}return Object.keys(out).length?out:JSON.parse(JSON.stringify(starter));}
-let data;try{const saved=JSON.parse(localStorage.getItem(KEY));data=normalizeLists(saved||starter)}catch(e){data=JSON.parse(JSON.stringify(starter))}
-let current=Object.keys(data)[0];const $=id=>document.getElementById(id);
-function persist(){localStorage.setItem(KEY,JSON.stringify(data));render()}
-function el(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
-function allStocks(){return Object.entries(data).flatMap(([list,stocks])=>stocks.map(s=>({...s,list})))}
-const tvSymbols={NVDA:"NASDAQ:NVDA",TSM:"NYSE:TSM",AIR:"EURONEXT:AIR",NTR:"NYSE:NTR",RACE:"NYSE:RACE",CRWD:"NASDAQ:CRWD",LONN:"SIX:LONN",AVGO:"NASDAQ:AVGO",CSU:"TSX:CSU",MELI:"NASDAQ:MELI",IFX:"XETR:IFX"};
-function refreshChart(){const sel=$("chartSelect"),host=$("tvChart");if(!sel||!host)return;const key=sel.value||"NVDA",symbol=tvSymbols[key]||key;host.replaceChildren();const mount=el("div");mount.style.height="100%";mount.style.width="100%";host.append(mount);const script=document.createElement("script");script.type="text/javascript";script.async=true;script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";script.innerHTML=JSON.stringify({autosize:true,symbol,interval:"D",timezone:"Europe/Berlin",theme:"dark",style:"1",locale:"de_DE",allow_symbol_change:true,calendar:false,support_host:"https://www.tradingview.com"});mount.append(script)}
-function refreshChartOptions(){const sel=$("chartSelect"),previous=sel.value;sel.replaceChildren();const stocks=allStocks();stocks.forEach(s=>{const o=el("option","",s.name+" ("+s.symbol+")");o.value=s.symbol;sel.append(o)});if(stocks.some(s=>s.symbol===previous))sel.value=previous;else if(stocks.length)sel.value=stocks[0].symbol;refreshChart()}
-function renderTargets(){const host=$("targetStocks");host.replaceChildren();const stocks=allStocks().filter(s=>String(s.target||"").trim()!=="");if(!stocks.length){host.append(el("p","note","Noch keine Zielkurse hinterlegt. Trage bei einer Aktie im Feld „Zielkurs €“ deinen persönlichen Zielkurs ein."));return}stocks.forEach(s=>{const row=el("div","stock"),info=el("div"),name=el("div","name",s.name+" · "+s.symbol),sub=el("div","sub","Zielkurs: "+s.target+" € · "+s.list);info.append(name,sub);row.append(info);host.append(row)})}
-function render(){const lists=Object.keys(data);if(!data[current])current=lists[0];$("tabs").replaceChildren();lists.forEach(n=>{let b=el("button","tab"+(n===current?" active":""),n);b.onclick=()=>{current=n;render()};$("tabs").append(b)});$("listTitle").textContent=current;const stocks=allStocks();$("total").textContent=stocks.length;$("listCount").textContent=lists.length;$("alerts").textContent=stocks.filter(s=>String(s.target||"").trim()!=="").length;refreshChartOptions();renderTargets();const host=$("stocks");host.replaceChildren();(data[current]||[]).forEach((s,i)=>{const item=el("div","stock"),left=el("div"),title=el("div","name",s.name+" · "+s.symbol),sub=el("div","sub",s.target?("Zielkurs: "+s.target+" €"):"Kein Zielkurs hinterlegt");left.append(title,sub);const actions=el("div","actions");const target=el("input");target.type="number";target.step="0.01";target.placeholder="Zielkurs €";target.value=s.target||"";target.title="Persönlicher Zielkurs in Euro";target.onchange=()=>{s.target=target.value;persist()};const move=el("select");move.append(el("option","","Verschieben …"));lists.filter(n=>n!==current).forEach(n=>{let o=el("option","",n);o.value=n;move.append(o)});move.onchange=()=>{if(move.value){data[move.value].push(s);data[current].splice(i,1);persist()}};const detail=el("button","","Details");detail.onclick=()=>panel.classList.toggle("open");const del=el("button","danger","Entfernen");del.onclick=()=>{if(confirm(s.name+" aus "+current+" entfernen?")){data[current].splice(i,1);persist()}};actions.append(target,move,detail,del);const panel=el("div","details"),thesisLabel=el("label","fieldlabel","Investmentthese / warum beobachte ich die Aktie?"),thesis=el("textarea");thesis.placeholder="Wachstumstreiber, Burggraben, Wettbewerbsvorteile …";thesis.value=s.thesis||"";thesis.onchange=()=>{s.thesis=thesis.value;persist()};const riskLabel=el("label","fieldlabel","Risiken / nächste Prüfpunkte"),risks=el("textarea");risks.placeholder="Bewertung, Verschuldung, Margen, Quartalszahlen …";risks.value=s.risks||"";risks.onchange=()=>{s.risks=risks.value;persist()};panel.append(thesisLabel,thesis,riskLabel,risks,el("div","note","Diese Felder speichern deine eigenen Notizen."));item.append(left,actions,panel);host.append(item)})}
-function jumpTo(id){$(id).scrollIntoView({behavior:"smooth",block:"start"})}
-$("goStocks").onclick=()=>jumpTo("stocksPanel");$("goLists").onclick=()=>jumpTo("watchlistPanel");$("goTargets").onclick=()=>jumpTo("targetPanel");
-$("chartSelect").addEventListener("change",refreshChart);
-$("addStock").onclick=()=>{let name=$("stockName").value.trim(),symbol=$("symbol").value.trim().toUpperCase();if(!name||!symbol){alert("Bitte Aktienname und Ticker/ISIN eingeben.");return}if(allStocks().some(s=>s.symbol.toLowerCase()===symbol.toLowerCase())){alert("Dieser Ticker ist bereits in einer Watchlist.");return}data[current].push({name,symbol});$("stockName").value="";$("symbol").value="";persist()};$("symbol").addEventListener("keydown",e=>{if(e.key==="Enter")$("addStock").click()});
-$("addList").onclick=()=>{let n=$("newList").value.trim();if(!n)return;if(data[n]){alert("Diese Watchlist existiert bereits.");return}data[n]=[];current=n;$("newList").value="";persist()};
-$("export").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lex-investment-watchlists.json";a.click();URL.revokeObjectURL(a.href)};
-$("import").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());data=normalizeLists(d);current=Object.keys(data)[0];persist()}catch(err){alert("Import fehlgeschlagen: Datei ist ungültig.")}e.target.value=""};
-function makeMarketPrompt(){const groups=Object.entries(data).map(([list,stocks])=>{const lines=stocks.map(s=>{const extras=[];if(s.target)extras.push("persönlicher Zielkurs "+s.target+" EUR");if(s.thesis)extras.push("Investmentthese: "+s.thesis);if(s.risks)extras.push("Risiken/Prüfpunkte: "+s.risks);return "- "+s.name+" ("+s.symbol+")"+(extras.length?" – "+extras.join("; "):"")});return "WATCHLIST: "+list+"\n"+(lines.length?lines.join("\n"):"(derzeit leer)")}).join("\n\n");return "Bitte aktualisiere mein LEX Investment Cockpit anhand der folgenden Watchlists.\n\nArbeite mit möglichst aktuellen, verlässlichen Webquellen und nenne Kurszeitpunkt, Währung und nach Möglichkeit EUR-Gegenwert. Prüfe wichtige Unternehmensnachrichten, Quartalszahlen, Umsatz- und Gewinnentwicklung, Margen, Free Cashflow, Verschuldung, Burggraben, Bewertung und Chartbild. Nutze bevorzugt offizielle Geschäfts-/Quartalsberichte, TradingView, Onvista und seriöse Finanzquellen.\n\nBewerte kritisch nach Kaufchance, Beobachten, Halten und möglichem Verkauf. Nenne Gründe und Risiken; keine Kaufempfehlung allein wegen eines Kursrückgangs. Hebe nur wesentliche Nachrichten und attraktive Bewertungen hervor. Weise auf Datenlücken hin und erfinde keine Kennzahlen.\n\nMEINE WATCHLISTS:\n"+groups}
-$("marketRefresh").onclick=()=>{$("marketPrompt").value=makeMarketPrompt();$("copyStatus").textContent="Analyseauftrag erstellt. Kopiere ihn und sende ihn in diesem Chat."};$("copyPrompt").onclick=async()=>{const value=$("marketPrompt").value||makeMarketPrompt();$("marketPrompt").value=value;try{await navigator.clipboard.writeText(value);$("copyStatus").textContent="Kopiert. Du kannst den Auftrag jetzt hier im Chat einfügen."}catch(e){$("marketPrompt").focus();$("marketPrompt").select();$("copyStatus").textContent="Automatisches Kopieren nicht erlaubt. Text ist markiert – bitte manuell kopieren."}};
-if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});render();
+const STORE="lex-cockpit-62-data";
+const emptyBook=()=>({transactions:[],imports:[],watchlist:[],dividendEstimates:{}});
+let state={mine:{dividend:emptyBook(),growth:emptyBook()},partner:emptyBook(),earnings:[]};
+const initialEarnings=[
+ {symbol:"SIE",date:"2026-11-12",url:"https://www.siemens.com/de-de/company/investor-relations/financial-results/",status:"confirmed",source:"Siemens Finanzpublikationen"},
+ {symbol:"CRWD",date:"2026-12-01",url:"https://ir.crowdstrike.com/news-releases/news-release-details/crowdstrike-announces-date-fiscal-third-quarter-2027-financial",status:"confirmed",source:"CrowdStrike IR-Mitteilung vom 04.11.2026"},
+ {symbol:"ASML",date:"2027-01-27",url:"https://investor.asml.com/",status:"confirmed",source:"ASML Investor Relations"},
+ {symbol:"AIR",date:"2027-02-18",url:"https://www.airbus.com/en/investors/upcoming-events-presentations",status:"confirmed",source:"Airbus Finanzkalender"},
+ {symbol:"IFX",date:"2027-02-03",url:"https://www.infineon.com/about/events",status:"estimated",source:"Infineon Eventseite: Termin vorläufig"}
+];
+let owner="mine",portfolio="dividend",pendingImport=null;
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+const safe=(s)=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function load(){try{let x=JSON.parse(localStorage.getItem(STORE));if(x&&x.mine&&x.partner)state=x;else{let old=JSON.parse(localStorage.getItem("lex-cockpit-v2"));if(old&&typeof old==="object"){Object.entries(old).forEach(([k,arr])=>{if(Array.isArray(arr))arr.forEach(s=>state.mine.growth.watchlist.push({name:s.name||s.company||"Aktie",symbol:s.symbol||s.ticker||"",strategy:"growth"}))})}}}catch(e){}if(!state.earningsInitialized){state.earnings=initialEarnings.map(x=>({...x}));state.earningsInitialized=true;}}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll();renderEarnings();combined();renderDividends()}
+function book(){return owner==="partner"?state.partner:state.mine[portfolio]}
+function labelBook(){return owner==="partner"?"Depot deiner Verlobten":portfolio==="dividend"?"Dividendendepot":"Wachstumsdepot"}
+function setOwner(x){owner=x;document.querySelectorAll("[data-owner]").forEach(b=>b.classList.toggle("active",b.dataset.owner===x));["mine","partner","combined"].forEach(id=>$(id).classList.toggle("show",id===x));$("ownerDescription").textContent=x==="mine"?"Deine Depots: Scalable Capital (Dividende) und Trade Republic (Wachstum).":x==="partner"?"Separates Scalable-Capital-Depot deiner Verlobten.":"Optionale Addition aller drei getrennten Bereiche.";renderAll()}
+function setPortfolio(x){portfolio=x;document.querySelectorAll("#portfolioTabs [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view==="overview"));showView("overview");renderAll()}
+function showView(v){document.querySelectorAll("#portfolioTabs [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===v));["overview","analysis","import","watch"].forEach(k=>$("view-"+k).classList.toggle("show",k===v));}
+function showPartnerView(v){document.querySelectorAll("#partnerTabs [data-pview]").forEach(b=>b.classList.toggle("active",b.dataset.pview===v));["overview","analysis","import","watch"].forEach(k=>$("pview-"+k).classList.toggle("show",k===v))}
+function parseCSV(text){let first=text.split(/\r?\n/,1)[0]||"",delim=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?";":(first.match(/\t/g)||[]).length>(first.match(/,/g)||[]).length?"\t":",";let rows=[],row=[],cell="",q=false;for(let i=0;i<text.length;i++){let c=text[i];if(c==='"'){if(q&&text[i+1]==='"'){cell+='"';i++}else q=!q}else if(c===delim&&!q){row.push(cell);cell=""}else if((c==="\n"||c==="\r")&&!q){if(c==="\r"&&text[i+1]==="\n")i++;row.push(cell);if(row.some(v=>v.trim()))rows.push(row);row=[];cell=""}else cell+=c}row.push(cell);if(row.some(v=>v.trim()))rows.push(row);return rows}
+function num(v){if(v==null||v==="")return 0;let s=String(v).trim().replace(/\s/g,"").replace(/[€$]/g,"");if(s.includes(",")&&s.includes(".")){if(s.lastIndexOf(",")>s.lastIndexOf("."))s=s.replace(/\./g,"").replace(",",".");else s=s.replace(/,/g,"")}else if(s.includes(","))s=s.replace(",",".");let n=Number(s);return Number.isFinite(n)?n:0}
+function parseTransactions(text,broker){
+ let rows=parseCSV(text);if(rows.length<2)throw Error("Die CSV enthält keine Buchungszeilen.");
+ let headers=rows[0].map(x=>x.trim().toLowerCase().replace(/^\uFEFF/,""));
+ const ix=(...names)=>headers.findIndex(h=>names.includes(h));
+ let dateI=ix("date","datum","datetime","booking date","trade date"),typeI=ix("type","typ","transaction type","transaction"),nameI=ix("description","name","instrument","wertpapier","product"),isinI=ix("isin","isin/wkn"),sharesI=ix("shares","quantity","stück","stueck","qty"),priceI=ix("price","kurs","preis"),amountI=ix("amount","betrag","total","net amount"),feeI=ix("fee","gebühr","gebuehr","fees"),taxI=ix("tax","steuer","taxes"),currencyI=ix("currency","währung","waehrung"),statusI=ix("status");
+ if(dateI<0||typeI<0||amountI<0)throw Error("CSV-Format nicht sicher erkannt. Erwartet werden mindestens Datum, Typ und Betrag.");
+ if(broker==="scalable"&&!(ix("assettype")>=0&&ix("reference")>=0))throw Error("Das sieht nicht nach dem Scalable-Capital-Transaktionsexport aus.");
+ let out=[];for(let i=1;i<rows.length;i++){let r=rows[i],status=statusI>=0?r[statusI]:"";if(status&&!/executed|ausgeführt|ausgefuehrt|completed|booked/i.test(status))continue;
+ let rawType=(r[typeI]||"").toLowerCase(),assetType=ix("assettype")>=0?(r[ix("assettype")]||"").toLowerCase():"",name=nameI>=0?r[nameI]:"",amount=num(r[amountI]),shares=sharesI>=0?num(r[sharesI]):0,price=priceI>=0?num(r[priceI]):0,fee=feeI>=0?num(r[feeI]):0,tax=taxI>=0?num(r[taxI]):0;
+ let kind=/dividend|distribution|ausschütt|ausschuett|zins|interest/i.test(rawType+" "+name)?"dividend":/sell|verkauf|veräußer|veraesser/i.test(rawType)?"sell":/buy|kauf|sparplan|savings plan|purchase|execution/i.test(rawType)?"buy":/cash|deposit|withdraw|transfer|einzahlung|auszahlung/i.test(rawType+" "+assetType)?"cash":"other";
+ let isin=isinI>=0?r[isinI]:"";if(kind==="buy")shares=Math.abs(shares);if(kind==="sell")shares=-Math.abs(shares);
+ out.push({date:(r[dateI]||"").slice(0,10),type:rawType,name:name||isin||"Unbekannt",isin,shares,price,amount,fee,tax,currency:currencyI>=0?r[currencyI]||"EUR":"EUR",kind,source:broker,raw:r.join(" | ")});}
+ return out;
+}
+function fileHash(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
+function setupImport(inputId,msgId,wrapId,previewId,confirmId,which){$(inputId).addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let text=await f.text(),target=which==="current"?portfolio:which,broker=target==="growth"?"trade-republic":"scalable",tx=parseTransactions(text,broker),hash=fileHash(text),b=target==="partner"?state.partner:state.mine[target];if(b.imports.some(x=>x.hash===hash))throw Error("Diese Datei wurde in diesem Depot bereits importiert.");pendingImport={which:target,broker,hash,tx,file:f.name};$(msgId).textContent=`${f.name}: ${tx.length} Buchungen erkannt · ${tx.filter(x=>x.kind==="buy").length} Käufe · ${tx.filter(x=>x.kind==="sell").length} Verkäufe · ${tx.filter(x=>x.kind==="dividend").length} Ausschüttungen.`;let sample=tx.slice(0,8);$(previewId).innerHTML=`<table><thead><tr><th>Datum</th><th>Typ</th><th>Wertpapier</th><th>Stück</th><th>Betrag</th></tr></thead><tbody>${sample.map(t=>`<tr><td>${safe(t.date)}</td><td>${safe(t.kind)}</td><td>${safe(t.name)}</td><td>${t.shares||"–"}</td><td>${fmt(t.amount)}</td></tr>`).join("")}</tbody></table><p class="note">Vorschau der ersten ${sample.length} von ${tx.length} Buchungen.</p>`;$(wrapId).classList.remove("hidden")}catch(err){pendingImport=null;$(msgId).textContent="Import nicht übernommen: "+err.message;$(wrapId).classList.add("hidden")}e.target.value=""})}
+function commitImport(which,msgId,wrapId){let target=which==="current"?portfolio:which;if(!pendingImport||pendingImport.which!==target)return;let b=target==="partner"?state.partner:state.mine[target];let tx=pendingImport.tx;b.transactions.push(...tx);b.imports.push({hash:pendingImport.hash,file:pendingImport.file,date:new Date().toISOString(),count:tx.length,broker:pendingImport.broker});$(msgId).textContent=`Import übernommen: ${tx.length} Buchungen.`;$(wrapId).classList.add("hidden");pendingImport=null;save()}
+function positions(b){let map={};for(const t of b.transactions){if(!t.isin&&!t.name)continue;let key=t.isin||t.name;if(!map[key])map[key]={name:t.name,isin:t.isin,shares:0,cost:0,dividends:0};let p=map[key];if(t.kind==="buy"){let qty=Math.abs(t.shares),cost=Math.abs(t.amount)+t.fee;p.shares+=qty;p.cost+=cost}else if(t.kind==="sell"){let qty=Math.abs(t.shares);let avg=p.shares>0?p.cost/p.shares:0;p.shares=Math.max(0,p.shares-qty);p.cost=Math.max(0,p.cost-avg*qty)}else if(t.kind==="dividend"){p.dividends+=t.amount-t.tax-t.fee}if(t.name&&t.name!=="Unbekannt")p.name=t.name}return Object.values(map).filter(p=>p.shares>0.000001||p.dividends!==0)}
+function renderBook(b,prefix){let ps=positions(b),sum=ps.reduce((a,p)=>a+p.cost,0),div=b.transactions.filter(t=>t.kind==="dividend").reduce((a,t)=>a+t.amount-t.tax-t.fee,0);$(prefix+"PosCount").textContent=ps.length;$(prefix+"PosValue").textContent=fmt(sum);$(prefix+"DivTotal").textContent=fmt(div);let host=$(prefix+"Positions");host.innerHTML=ps.length?ps.map(p=>`<div class="stock"><div><div class="name">${safe(p.name)}</div><div class="sub">${safe(p.isin||"Keine ISIN")} · Bestand ${p.shares.toLocaleString("de-DE",{maximumFractionDigits:6})} Stück</div></div><div style="text-align:right"><b>${fmt(p.cost)}</b><div class="sub">Einstandskosten</div></div></div>`).join(""):'<p class="note">Noch keine Wertpapierbestände importiert.</p>'}
+function renderWatch(b,hostId){let host=$(hostId);host.innerHTML=b.watchlist.length?b.watchlist.map((s,i)=>`<div class="stock"><div><b>${safe(s.name)} · ${safe(s.symbol)}</b><div class="sub">${safe(s.note||"Depot-Eignung noch zu prüfen")}</div></div><button class="danger" onclick="removeWatch('${hostId}',${i})">Entfernen</button></div>`).join(""):'<p class="note">Noch keine Aktien gespeichert.</p>'}
+function removeWatch(host,i){let b=host==="pWatchStocks"?state.partner:book();b.watchlist.splice(i,1);save()}
+function renderAll(){let b=owner==="partner"?state.partner:state.mine[portfolio];if(owner==="mine"){$("portfolioTitle").textContent=portfolio==="dividend"?"Dividendendepot · Scalable Capital":"Wachstumsdepot · Trade Republic";$("portfolioBadge").textContent=portfolio==="dividend"?"Dividendendepot":"Wachstumsdepot";$("analysisHeading").textContent=portfolio==="dividend"?"Analyse nach Dividendenstrategie":"Analyse nach Wachstumsstrategie";$("analysisFocus").textContent=portfolio==="dividend"?"Ausschüttungsquote, Dividendenhistorie, Cashflow, Stabilität und Bewertung.":"Umsatz- und Gewinnwachstum, Margen, Wettbewerbsvorteile, Kapitalrendite und Bewertung.";renderBook(b,"");renderWatch(b,"watchStocks");$("analysisStocks").innerHTML=b.watchlist.map(s=>`<div class="row" style="padding:7px 0"><b>${safe(s.name)} (${safe(s.symbol)})</b><span class="badge">${portfolio==="dividend"?"Dividendencheck":"Wachstumscheck"}</span></div>`).join("")}else if(owner==="partner"){renderBook(state.partner,"p");renderWatch(state.partner,"pWatchStocks");$("pAnalysisStocks").innerHTML=state.partner.watchlist.map(s=>`<div class="row" style="padding:7px 0"><b>${safe(s.name)} (${safe(s.symbol)})</b><span class="badge">Eigene Analyse</span></div>`).join("")}renderImportHistory()}
+function renderImportHistory(){let b=owner==="partner"?state.partner:state.mine[portfolio];let id=owner==="partner"?"pImportHistory":"importHistory";$(id).innerHTML=b.imports.length?"<h3>Importhistorie</h3>"+b.imports.map(x=>`<div class="row"><span class="note">${safe(x.file)} · ${x.count} Buchungen · ${new Date(x.date).toLocaleDateString("de-DE")}</span></div>`).join(""):""}
+function addWatch(isPartner){let name=$(isPartner?"pStockName":"newStockName").value.trim(),symbol=$(isPartner?"pStockSymbol":"newStockSymbol").value.trim().toUpperCase(),b=isPartner?state.partner:book();if(!name||!symbol){alert("Bitte Name und Ticker oder ISIN eingeben.");return}if(b.watchlist.some(s=>s.symbol===symbol)){alert("Diese Aktie ist in diesem Bereich bereits gespeichert.");return}let strategy=isPartner?"independent":portfolio;b.watchlist.push({name,symbol,strategy});$(isPartner?"pStockName":"newStockName").value="";$(isPartner?"pStockSymbol":"newStockSymbol").value="";save()}
+function renderDividends(){let year=Number($("divYear").value),all=[...state.mine.dividend.transactions,...state.mine.growth.transactions,...state.partner.transactions],months=Array(12).fill(0),hist=0;all.filter(t=>t.kind==="dividend"&&String(t.date).slice(0,4)==String(year)).forEach(t=>{let m=Number(String(t.date).slice(5,7))-1;if(m>=0&&m<12){months[m]+=t.amount-t.tax-t.fee;hist+=t.amount-t.tax-t.fee}});$("divHist").textContent=fmt(hist);$("divForecast").textContent="–";$("divMonths").textContent=months.filter(x=>x!==0).length;let names=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];let max=Math.max(1,...months.map(Math.abs));$("divMonthsGrid").innerHTML=names.map((n,i)=>`<div class="month"><b>${n}</b><strong>${fmt(months[i])}</strong><div class="sub">${months[i]?"Historische Zahlung":"Keine Buchung im Import"}</div><div class="bar"><span style="width:${Math.max(0,months[i]/max*100)}%"></span></div></div>`).join("")}
+function allTrackedStocks(){let out=[];const add=(b,area)=>{positions(b).forEach(p=>out.push({name:p.name,symbol:p.isin||p.name,area}));(b.watchlist||[]).forEach(w=>out.push({name:w.name,symbol:w.symbol,area}));};add(state.mine.dividend,"Dein Dividendendepot");add(state.mine.growth,"Dein Wachstumsdepot");add(state.partner,"Depot deiner Verlobten");let seen=new Set();return out.filter(x=>{let k=x.symbol.toUpperCase();if(seen.has(k))return false;seen.add(k);return true})}
+function prepareEarningsResearch(){let stocks=allTrackedStocks();let watch=[{name:"NVIDIA",symbol:"NVDA"},{name:"TSMC",symbol:"TSM"},{name:"Airbus",symbol:"AIR"},{name:"Nutrien",symbol:"NTR"},{name:"Ferrari",symbol:"RACE"},{name:"CrowdStrike",symbol:"CRWD"},{name:"Lonza",symbol:"LONN"},{name:"Broadcom",symbol:"AVGO"},{name:"Constellation Software",symbol:"CSU"},{name:"MercadoLibre",symbol:"MELI"},{name:"Infineon",symbol:"IFX"}];stocks=[...stocks,...watch];let seen=new Set();stocks=stocks.filter(x=>{let k=x.symbol.toUpperCase();if(seen.has(k))return false;seen.add(k);return true});$("earningsResearch").innerHTML=stocks.length?`<p class="note">${stocks.length} Unternehmen gefunden. Tippe auf „Termin online suchen“ und prüfe anschließend den offiziellen IR-Kalender. Suchtreffer allein gelten nicht als Bestätigung.</p>`+stocks.map(x=>{let q=encodeURIComponent(`${x.name} ${x.symbol} investor relations financial calendar next earnings date 2026 2027`);return `<div class="stock"><div><b>${safe(x.name)} · ${safe(x.symbol)}</b><div class="sub">${safe(x.area||"Watchlist")}</div></div><a target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}">Termin online suchen ↗</a></div>`}).join(""):'<p class="note">Noch keine importierten Positionen gefunden. Du kannst die Watchlist-Suche trotzdem verwenden, sobald du Aktien ergänzt hast.</p>'}
+function renderEarnings(){$("earningsList").innerHTML=state.earnings.length?state.earnings.sort((a,b)=>a.date.localeCompare(b.date)).map((e,i)=>`<div class="stock"><div><b>${safe(e.symbol)} · ${safe(e.date)}</b><div class="sub">${e.status==="confirmed"?"Offiziell bestätigt":e.status==="published"?"Bericht veröffentlicht":"Geschätzt"} · ${safe(e.source||"")} ${e.url?`· <a target="_blank" rel="noopener" href="${safe(e.url)}">Quelle öffnen ↗</a>`:"· Keine Quelle hinterlegt"}</div></div><button class="danger" onclick="deleteEarning(${i})">Löschen</button></div>`).join(""):'<p class="note">Noch keine Termine hinterlegt.</p>'}
+function deleteEarning(i){state.earnings.splice(i,1);save()}
+function forecast(){let start=Math.max(0,num($("forecastStart").value)),monthly=Math.max(0,num($("forecastMonthly").value)),rate=num($("forecastRate").value)/100,years=Math.min(40,Math.max(1,Math.round(num($("forecastYears").value)||1))),monthlyRate=Math.pow(1+rate,1/12)-1,rows=[];for(let y=0;y<=years;y++){let months=y*12,val=monthlyRate===0?start+monthly*months:start*Math.pow(1+monthlyRate,months)+monthly*(Math.pow(1+monthlyRate,months)-1)/monthlyRate;rows.push({year:y,value:val})}let end=rows[rows.length-1].value,paid=start+monthly*years*12;$("forecastResult").textContent=fmt(end);$("forecastDetails").textContent=`Eingezahltes Kapital: ${fmt(paid)} · Rechnerischer Wertzuwachs: ${fmt(end-paid)}. Vor Steuern, Gebühren und Inflation.`;$("forecastTable").innerHTML="<table><thead><tr><th>Jahr</th><th>Modellwert</th></tr></thead><tbody>"+rows.map(r=>`<tr><td>${r.year}</td><td>${fmt(r.value)}</td></tr>`).join("")+"</tbody></table>"}
+function combined(){let d=positions(state.mine.dividend).reduce((a,p)=>a+p.cost,0),g=positions(state.mine.growth).reduce((a,p)=>a+p.cost,0),p=positions(state.partner).reduce((a,x)=>a+x.cost,0);$("cDiv").textContent=fmt(d);$("cGrowth").textContent=fmt(g);$("cPartner").textContent=fmt(p);$("cTotal").textContent=fmt(d+g+p)}
+document.querySelectorAll("[data-owner]").forEach(b=>b.onclick=()=>setOwner(b.dataset.owner));
+document.querySelectorAll("#portfolioTabs [data-view]").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+document.querySelectorAll("#partnerTabs [data-pview]").forEach(b=>b.onclick=()=>showPartnerView(b.dataset.pview));
+$("saveStock").onclick=()=>addWatch(false);$("pSaveStock").onclick=()=>addWatch(true);
+setupImport("csvFile","importMessage","previewWrap","preview","confirmImport","current");
+$("csvFile").addEventListener("change",()=>{});$("confirmImport").onclick=()=>commitImport("current","importMessage","previewWrap");
+setupImport("pCsvFile","pImportMessage","pPreviewWrap","pPreview","pConfirmImport","partner");$("pConfirmImport").onclick=()=>commitImport("partner","pImportMessage","pPreviewWrap");
+/* Growth area import: accept only Trade Republic style; broker-specific format is validated as far as possible. */
+$("portfolioTabs").addEventListener("click",e=>{if(e.target.dataset.view==="import"&&portfolio==="growth"){$("importHeading").textContent="Trade Republic → Wachstumsdepot";$("csvFile").accept=".csv,text/csv"}else if(e.target.dataset.view==="import"){$("importHeading").textContent="Scalable Capital → Dividendendepot";$("csvFile").accept=".csv,text/csv"}$("importMessage").textContent="Datei wird dem ausgewählten Depot zugeordnet.";});
+$("refreshDiv").onclick=renderDividends;
+$("prepareEarningsResearch").onclick=prepareEarningsResearch;
+$("addEarning").onclick=()=>{$("earnSymbol").focus();alert("Bitte unten Ticker, Datum, Status und möglichst den offiziellen IR-Link eintragen.")};
+$("saveEarning").onclick=()=>{let symbol=$("earnSymbol").value.trim().toUpperCase(),date=$("earnDate").value,url=$("earnUrl").value.trim(),status=$("earnStatus").value;if(!symbol||!date){alert("Bitte Ticker und Datum eingeben.");return}state.earnings.push({symbol,date,url,status});$("earnSymbol").value=$("earnDate").value=$("earnUrl").value="";save()};
+$("calcForecast").onclick=forecast;
+$("exportAll").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="LEX_Cockpit_6_2_Sicherung.json";a.click();URL.revokeObjectURL(a.href)};
+$("restoreAll").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!x.mine||!x.partner)throw Error();state=x;save();alert("Sicherung importiert.")}catch(err){alert("Sicherung konnte nicht gelesen werden.")}e.target.value=""};
+load();renderAll();combined();renderDividends();renderEarnings();forecast();
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
 </script></body></html>

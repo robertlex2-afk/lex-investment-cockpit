@@ -1,19 +1,18 @@
 {
-  "name": "LEX Investment Cockpit",
+  "name": "LEX Investment Cockpit 6.2",
   "short_name": "LEX Cockpit",
-  "start_url": "./",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b1220",
   "theme_color": "#101827",
-  "description": "Persönliche Aktien- und Watchlist-Verwaltung",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
