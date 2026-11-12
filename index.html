@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>LEX Investment Cockpit</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--p:#131e30;--p2:#1b2a40;--line:#2a3a52;--muted:#9aabc2;--txt:#edf3fb;--green:#45d49a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px max(18px,calc((100vw - 1000px)/2));background:#101827;border-bottom:1px solid var(--line)}
+h1{font-size:21px;margin:0 0 4px}header p,.muted,.note{color:var(--muted)}header p{margin:0;font-size:13px}
+main{max-width:1000px;margin:auto;padding:17px;display:grid;gap:14px}
+.panel,.stat{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:15px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:4px}
+h2{font-size:16px;margin:0 0 12px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input,select,textarea,button{font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--p2);color:var(--txt)}
+input,textarea{min-width:0;flex:1}textarea{width:100%;min-height:65px;resize:vertical}button{cursor:pointer}button.primary{background:#167a5a;border-color:#167a5a}
+button.danger{background:#47252c;border-color:#63313a;padding:7px 9px}.tabs{display:flex;gap:7px;overflow:auto}.tab{white-space:nowrap}.tab.active{background:#167a5a;border-color:#167a5a}
+.stock{padding:13px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.stock:last-child{border:0}
+.name{font-weight:700}.sub{font-size:12px;color:var(--muted);margin-top:3px}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.actions input{width:100px;flex:0 1 100px}.actions select{max-width:145px;padding:8px}
+.note{font-size:12px;line-height:1.5}.fieldlabel{font-size:12px;color:var(--muted);display:block;margin:8px 0 4px}
+.details{display:none;grid-column:1/-1;padding:10px;background:#101a2a;border-radius:10px}.details.open{display:block}
+@media(max-width:560px){.grid{grid-template-columns:repeat(3,1fr)}.stat{padding:11px}.stat strong{font-size:21px}.stock{grid-template-columns:1fr}.actions{justify-content:flex-start}}
+</style></head><body>
+<header><h1>LEX Investment Cockpit</h1><p>Deine persönliche Aktien- und Watchlist-Verwaltung</p></header>
+<main>
+<section class="grid">
+ <div class="stat"><small>Aktien gesamt</small><strong id="total">11</strong></div>
+ <div class="stat"><small>Watchlists</small><strong id="listCount">3</strong></div>
+ <div class="stat"><small>Aktive Zielkurse</small><strong id="alerts">0</strong></div>
+</section>
+<section class="panel">
+ <h2>Watchlists</h2><div class="tabs" id="tabs"></div>
+ <div class="row" style="margin-top:11px"><input id="newList" placeholder="Neue Watchlist, z. B. Dividenden"><button id="addList">+ Erstellen</button></div>
+</section>
+<section class="panel">
+ <h2 id="listTitle">Wachstumsaktien</h2>
+ <div class="row"><input id="stockName" placeholder="Aktienname oder Unternehmen"><input id="symbol" placeholder="Ticker / ISIN" style="max-width:135px"><button class="primary" id="addStock">+ Aktie</button></div>
+ <div id="stocks" style="margin-top:10px"></div>
+</section>
+<section class="panel">
+ <h2>Aktienmarkt aktualisieren</h2>
+ <p class="note">Erstellt aus allen deinen aktuellen Watchlists einen fertigen Analyseauftrag. Kopiere ihn und füge ihn in diesen Chat ein, damit ich Kurse, Nachrichten, Quartalszahlen und Bewertungen recherchieren kann. Die App selbst läuft lokal und überwacht nicht im Hintergrund.</p>
+ <div class="row">
+  <button class="primary" id="marketRefresh">Analyseauftrag erstellen</button>
+  <button id="copyPrompt">Auftrag kopieren</button>
+ </div>
+ <textarea id="marketPrompt" readonly placeholder="Hier erscheint dein persönlicher Analyseauftrag …" style="margin-top:10px"></textarea>
+ <p id="copyStatus" class="note" aria-live="polite"></p>
+</section>
+<section class="panel">
+ <h2>Datensicherung</h2><div class="row"><button id="export">Watchlists exportieren</button><label class="row" style="font-size:13px">Importieren <input type="file" id="import" accept="application/json" style="max-width:180px"></label></div>
+ <p class="note">Deine Eingaben werden lokal in diesem Browser gespeichert. Exportiere gelegentlich eine Sicherung, damit du deine Listen nicht verlierst.</p>
+</section>
+<section class="panel">
+ <h2>Marktchart – TradingView</h2>
+ <p class="note">Der Chart wird kostenlos von TradingView eingebettet. Die Aktualität hängt vom jeweiligen Börsenplatz und dessen Datenfreigabe ab; verzögerte Kurse sind möglich. Das ist kein garantierter Echtzeit-Kursfeed.</p>
+ <div class="row"><select id="chartSelect" style="width:100%"></select></div>
+ <div id="tvChart" style="height:440px;margin-top:10px;background:#101a2a;border-radius:10px;overflow:hidden"></div>
+ <p class="note">Für die Anzeige werden Daten von TradingView geladen. <a href="https://www.tradingview.com/" target="_blank" rel="noopener" style="color:#8bbcff">TradingView öffnen</a></p>
+</section>
+<section class="panel">
+ <h2>Technischer Status</h2>
+ <p class="note"><b>Aktuell:</b> Watchlist-Verwaltung, Notizen, Investmentthese, Zielkurse und lokale Datensicherung funktionieren im Prototyp.</p>
+ <p class="note"><b>Noch nicht verbunden:</b> Live-/Echtzeitkurse, automatische Kursprüfung im Hintergrund, Nachrichtenfeed und echte Push-Mitteilungen. Dafür werden ein externer Datenanbieter, ein sicherer Server und ein HTTPS-Hosting benötigt. API-Schlüssel gehören nicht in diese Browser-Datei.</p>
+</section>
+</main>
+<script>
+const starter={
+ "Wachstumsaktien":[["Nvidia","NVDA"],["TSMC","TSM"],["Airbus","AIR"],["Nutrien","NTR"],["Ferrari","RACE"],["CrowdStrike","CRWD"],["Lonza","LONN"],["Broadcom","AVGO"],["Constellation Software","CSU"],["Mercado Libre","MELI"],["Infineon","IFX"]],
+ "Dividendenaktien":[],
+ "Beobachtung":[]
+};
+let data;try{data=JSON.parse(localStorage.getItem("lex-cockpit-v2"))||starter}catch(e){data=starter}
+let current=Object.keys(data)[0];const $=id=>document.getElementById(id);
+function persist(){localStorage.setItem("lex-cockpit-v2",JSON.stringify(data));render()}
+function el(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
+
+const tvSymbols={NVDA:"NASDAQ:NVDA",TSM:"NYSE:TSM",AIR:"EURONEXT:AIR",NTR:"NYSE:NTR",RACE:"NYSE:RACE",CRWD:"NASDAQ:CRWD",LONN:"SIX:LONN",AVGO:"NASDAQ:AVGO",CSU:"TSX:CSU",MELI:"NASDAQ:MELI",IFX:"XETR:IFX"};
+function refreshChart(){
+ const sel=$("chartSelect"),host=$("tvChart");if(!sel||!host)return;
+ const key=sel.value||"NVDA",symbol=tvSymbols[key]||key;
+ host.replaceChildren();
+ const mount=el("div");mount.style.height="100%";mount.style.width="100%";host.append(mount);
+ const script=document.createElement("script");script.type="text/javascript";script.async=true;
+ script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+ script.innerHTML=JSON.stringify({autosize:true,symbol,interval:"D",timezone:"Europe/Berlin",theme:"dark",style:"1",locale:"de_DE",allow_symbol_change:true,calendar:false,support_host:"https://www.tradingview.com"});
+ mount.append(script);
+}
+function refreshChartOptions(){
+ const sel=$("chartSelect"),previous=sel.value;sel.replaceChildren();
+ const stocks=Object.values(data).flat();
+ stocks.forEach(s=>{const o=el("option","",s.name+" ("+s.symbol+")");o.value=s.symbol;sel.append(o)});
+ if(stocks.some(s=>s.symbol===previous))sel.value=previous;
+ else if(stocks.length)sel.value=stocks[0].symbol;
+ refreshChart();
+}
+function render(){
+ const lists=Object.keys(data);if(!data[current])current=lists[0];
+ $("tabs").replaceChildren();lists.forEach(n=>{let b=el("button","tab"+(n===current?" active":""),n);b.onclick=()=>{current=n;render()};$("tabs").append(b)});
+ $("listTitle").textContent=current;$("total").textContent=Object.values(data).reduce((a,b)=>a+b.length,0);$("listCount").textContent=lists.length;
+ $("alerts").textContent=Object.values(data).flat().filter(s=>s.target).length;
+ refreshChartOptions();
+ const host=$("stocks");host.replaceChildren();
+ data[current].forEach((s,i)=>{
+  const item=el("div","stock"),left=el("div"),title=el("div","name",s.name+" · "+s.symbol),sub=el("div","sub",s.target?("Zielkurs: "+s.target+" €"):"Kein Zielkurs hinterlegt");
+  left.append(title,sub);const actions=el("div","actions");
+  const target=el("input");target.type="number";target.step="0.01";target.placeholder="Zielkurs €";target.value=s.target||"";target.title="Persönlicher Zielkurs in Euro";target.onchange=()=>{s.target=target.value;persist()};
+  const move=el("select");move.append(el("option","","Verschieben …"));lists.filter(n=>n!==current).forEach(n=>{let o=el("option","",n);o.value=n;move.append(o)});
+  move.onchange=()=>{if(move.value){data[move.value].push(s);data[current].splice(i,1);persist()}};
+  const detail=el("button","","Details");detail.onclick=()=>panel.classList.toggle("open");
+  const del=el("button","danger","Entfernen");del.onclick=()=>{if(confirm(s.name+" aus "+current+" entfernen?")){data[current].splice(i,1);persist()}};
+  actions.append(target,move,detail,del);
+  const panel=el("div","details");
+  const thesisLabel=el("label","fieldlabel","Investmentthese / warum beobachte ich die Aktie?");
+  const thesis=el("textarea");thesis.placeholder="Wachstumstreiber, Burggraben, Wettbewerbsvorteile …";thesis.value=s.thesis||"";thesis.onchange=()=>{s.thesis=thesis.value;persist()};
+  const riskLabel=el("label","fieldlabel","Risiken / nächste Prüfpunkte");
+  const risks=el("textarea");risks.placeholder="Bewertung, Verschuldung, Margen, Quartalszahlen …";risks.value=s.risks||"";risks.onchange=()=>{s.risks=risks.value;persist()};
+  const note=el("div","note","Hinweis: Diese Felder speichern deine eigenen Notizen. Sie sind keine automatisch erstellte Aktienanalyse.");
+  panel.append(thesisLabel,thesis,riskLabel,risks,note);item.append(left,actions,panel);host.append(item);
+ });
+}
+$("chartSelect").addEventListener("change",refreshChart);
+$("addStock").onclick=()=>{let name=$("stockName").value.trim(),symbol=$("symbol").value.trim().toUpperCase();if(!name||!symbol){alert("Bitte Aktienname und Ticker/ISIN eingeben.");return}
+ if(Object.values(data).flat().some(s=>s.symbol.toLowerCase()===symbol.toLowerCase())){alert("Dieser Ticker ist bereits in einer Watchlist.");return}
+ data[current].push({name,symbol});$("stockName").value="";$("symbol").value="";persist()};
+$("symbol").addEventListener("keydown",e=>{if(e.key==="Enter")$("addStock").click()});
+$("addList").onclick=()=>{let n=$("newList").value.trim();if(!n)return;if(data[n]){alert("Diese Watchlist existiert bereits.");return}data[n]=[];current=n;$("newList").value="";persist()};
+$("export").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lex-investment-watchlists.json";a.click();URL.revokeObjectURL(a.href)};
+$("import").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!d||Array.isArray(d)||typeof d!=="object")throw Error();data=d;current=Object.keys(data)[0];persist()}catch(err){alert("Import fehlgeschlagen: Datei ist ungültig.")}};
+
+function makeMarketPrompt(){
+ const groups=Object.entries(data).map(([list,stocks])=>{
+   const lines=stocks.map(s=>{
+     const extras=[];
+     if(s.target)extras.push("persönlicher Zielkurs "+s.target+" EUR");
+     if(s.thesis)extras.push("Investmentthese: "+s.thesis);
+     if(s.risks)extras.push("Risiken/Prüfpunkte: "+s.risks);
+     return "- "+s.name+" ("+s.symbol+")"+(extras.length?" – "+extras.join("; "):"");
+   });
+   return "WATCHLIST: "+list+"\n"+(lines.length?lines.join("\n"):"(derzeit leer)");
+ }).join("\n\n");
+ return "Bitte aktualisiere mein LEX Investment Cockpit anhand der folgenden Watchlists.\n\n"+
+ "Arbeite mit möglichst aktuellen, verlässlichen Webquellen und nenne den Kurszeitpunkt, die Währung und nach Möglichkeit den EUR-Gegenwert. Prüfe wichtige Unternehmensnachrichten, neue Quartalszahlen, Umsatz- und Gewinnentwicklung, Margen, Free Cashflow, Verschuldung, Burggraben, Bewertung und Chartbild. Nutze bevorzugt offizielle Geschäfts-/Quartalsberichte, TradingView, Onvista und seriöse Finanzquellen.\n\n"+
+ "Bewerte jede Aktie kritisch nach meinem Kriterienkatalog. Unterscheide klar zwischen Kaufchance, Beobachten, Halten und möglichem Verkauf. Nenne konkrete Gründe und Risiken; keine Kaufempfehlung allein wegen eines Kursrückgangs. Hebe nur wirklich wesentliche Nachrichten und attraktive Bewertungen hervor. Weise auf verzögerte oder fehlende Kursdaten hin und erfinde keine Kennzahlen.\n\n"+
+ "MEINE WATCHLISTS:\n"+groups;
+}
+$("marketRefresh").onclick=()=>{$("marketPrompt").value=makeMarketPrompt();$("copyStatus").textContent="Analyseauftrag erstellt. Kopiere ihn und sende ihn in diesem Chat."};
+$("copyPrompt").onclick=async()=>{
+ const value=$("marketPrompt").value||makeMarketPrompt();$("marketPrompt").value=value;
+ try{await navigator.clipboard.writeText(value);$("copyStatus").textContent="Kopiert. Du kannst den Auftrag jetzt hier im Chat einfügen."}
+ catch(e){$("marketPrompt").focus();$("marketPrompt").select();$("copyStatus").textContent="Automatisches Kopieren nicht erlaubt. Text ist markiert – bitte manuell kopieren."}
+};
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+render();
+</script></body></html>
