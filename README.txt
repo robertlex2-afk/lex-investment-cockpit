@@ -1,3 +1,2 @@
-LEX Investment Cockpit 6.2.6
-
-Fehlerrobuste Watchlist-Speicherung mit sichtbarer Rückmeldung; Analyseauftrag wird sichtbar erzeugt und kann kopiert werden; sichtbare JavaScript-Fehleranzeige. Live-Finanzdaten und vollautomatische Analyse-API sind nicht enthalten.
+LEX Investment Cockpit 6.2.7
+Fehlerkorrektur: Depotpositions-Container für das eigene Depot korrekt auf die lowercase-ID positions abgebildet. Vorhandene lokale Daten bleiben im Browser gespeichert. Kein CSV-Neuimport erforderlich.
