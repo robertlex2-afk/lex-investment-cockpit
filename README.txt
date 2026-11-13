@@ -1,3 +1,3 @@
-LEX Investment Cockpit 6.2.4
+LEX Investment Cockpit 6.2.6
 
-Scalable-CSV wird im Wachstumsdepot (Trade Republic) abgewiesen, damit Buchungen nicht dem falschen Depot zugeordnet werden. Dividendenkalender nur im Dividendendepot. Scalable-Import chronologisch mit Sparplänen, Verkäufen, Überträgen und Kapitalmaßnahmen. Analysebereich zeigt Positionen und Watchlist mit Recherchelinks; automatische Fundamentaldaten sind noch nicht angebunden. Vor erneutem Import Datensicherung exportieren und Importdaten des betroffenen Depots zurücksetzen. Überträge können ohne ursprüngliche Anschaffungsdaten keine vollständigen Einstandskosten liefern.
+Fehlerrobuste Watchlist-Speicherung mit sichtbarer Rückmeldung; Analyseauftrag wird sichtbar erzeugt und kann kopiert werden; sichtbare JavaScript-Fehleranzeige. Live-Finanzdaten und vollautomatische Analyse-API sind nicht enthalten.
