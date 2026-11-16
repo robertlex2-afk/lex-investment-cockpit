@@ -1,4 +1,4 @@
-const CACHE = "lex-cockpit-v6-2-8-cache";
+const CACHE = "lex-cockpit-v6-2-9-cache";
 const APP_FILES = [
   "./",
   "./index.html",
